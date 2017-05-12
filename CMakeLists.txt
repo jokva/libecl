@@ -55,6 +55,8 @@ if (USE_RPATH)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif ()
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/pycmake)
+
 ENABLE_TESTING()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -307,26 +309,13 @@ endif()
 
 add_subdirectory( lib )
 
-if (BUILD_PYTHON)
-   if (ERT_WINDOWS)
-      message(WARNING "Python is not supported on Windows")
-      set( BUILD_PYTHON OFF )
-   else()
-      # If finding the Python interpreter and required packages
-      # fails in the python/CMakeLists.txt file the BUILD_PYTHON
-      # will be set to OFF.
-      add_subdirectory( python )
+# If finding the Python interpreter and required packages
+# fails in the python/CMakeLists.txt file the BUILD_PYTHON
+# will be set to OFF.
+add_subdirectory( python )
 
-      if(ERT_DOC)
-         add_subdirectory( docs )
-      endif()
-   endif()
-endif()
-
-if (BUILD_PYTHON)
-   if (NOT ${BUILD_SHARED_LIBS})
-      message(FATAL_ERROR "The Python wrappers require shared libraries")
-   endif()
+if(ERT_DOC)
+    add_subdirectory( docs )
 endif()
 
 install(EXPORT ecl-config DESTINATION share/cmake/ecl)
