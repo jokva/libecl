@@ -8,6 +8,16 @@ if (NOT ${BUILD_SHARED_LIBS})
     message(FATAL_ERROR "The Python wrappers require shared libraries")
 endif()
 
+file(WRITE foo.c "")
+add_library(fooecl foo.c)
+target_link_libraries(fooecl ecl)
+add_library(fooutil foo.c)
+target_link_libraries(fooutil ert_util)
+add_library(foogeo foo.c)
+target_link_libraries(foogeo ert_geometry)
+add_library(foowell foo.c)
+target_link_libraries(foowell ecl_well)
+
 find_package(PythonInterp REQUIRED 2.7)
 include(FindPythonModule)
 include(PythonPackage)
@@ -34,6 +44,11 @@ add_python_package(pyecl ecl
     SOURCES python/ecl/__init__.py
     VERSION ${ERT_VERSION_MAJOR}.${ERT_VERSION_MINOR}.${ERT_VERSION_MICRO}
     VERSION__INIT__
+    TARGETS fooecl fooutil foogeo foowell
+    DEPEND_DIRS ecl          ${CMAKE_SOURCE_DIR}/libecl
+                ert_geometry ${CMAKE_SOURCE_DIR}/libgeometry
+                ert_util     ${CMAKE_SOURCE_DIR}/libert_util
+                ecl_well     ${CMAKE_SOURCE_DIR}/libecl_well
 )
 
 add_python_package(pyecl ecl SUBDIR ecl
@@ -102,6 +117,8 @@ add_python_package(pyecl ecl SUBDIR geo
 
 add_python_package(pyecl ecl SUBDIR util
     APPEND
+    TARGETS fooutil
+    DEPEND_DIRS ert_util ${CMAKE_SOURCE_DIR}/libert_util
     SOURCES python/ecl/util/__init__.py
             python/ecl/util/bool_vector.py
             python/ecl/util/buffer.py
@@ -181,6 +198,9 @@ if (INSTALL_ERT_LEGACY)
         add_python_test(tests.legacy.test_test.ErtLegacyTestTest tests/legacy/test_well.py)
     endif ()
 endif ()
+
+add_setup_py(cwrap setup.py.in)
+add_setup_py(pyecl setup.py.in)
 
 if (NOT BUILD_TESTS)
     return ()
