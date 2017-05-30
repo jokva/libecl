@@ -139,7 +139,7 @@ if (CMAKE_USE_PTHREADS_INIT)
     set(HAVE_PTHREAD TRUE)
     set(ERT_HAVE_THREAD_POOL ON)
 
-    set(pthread "${CMAKE_THREAD_LIBS_INIT}")
+    set(pthread "pthread")
 
     if (THREADS_HAVE_PTHREAD_ARG)
         set(pthreadarg "-pthread")
