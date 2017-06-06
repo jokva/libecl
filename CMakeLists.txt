@@ -298,9 +298,8 @@ if (MSVC)
    add_definitions( -D__func__="\\"????\\"")
 endif()
 
-if (ERT_WINDOWS)
-    message(WARNING "Python is not supported on Windows")
-    set( BUILD_PYTHON OFF )
+if (ERT_WINDOWS AND BUILD_PYTHON)
+    message(WARNING "Python is experimental on Windows")
 endif ()
 
 if (ERT_LINUX)
