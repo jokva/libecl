@@ -8,15 +8,10 @@ if (NOT ${BUILD_SHARED_LIBS})
     message(FATAL_ERROR "The Python wrappers require shared libraries")
 endif()
 
-file(WRITE lib.c "")
-add_library(libecl  lib.c)
-add_library(libutil lib.c)
-add_library(libgeo  lib.c)
-add_library(libwell lib.c)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/.lib.c "")
+add_library(libecl ${CMAKE_CURRENT_BINARY_DIR}/.lib.c)
 target_link_libraries(libecl  ecl)
-target_link_libraries(libutil ert_util)
-target_link_libraries(libgeo  ert_geometry)
-target_link_libraries(libwell ecl_well)
+set_target_properties(libecl PROPERTIES OUTPUT_NAME .ecl-python)
 
 find_package(PythonInterp REQUIRED 2.7)
 include(FindPythonModule)
@@ -44,11 +39,8 @@ add_python_package(pyecl ecl
     SOURCES python/ecl/__init__.py
     VERSION ${ERT_VERSION_MAJOR}.${ERT_VERSION_MINOR}.${ERT_VERSION_MICRO}
     VERSION__INIT__
-    TARGETS libecl libutil libgeo libwell
-    DEPEND_DIRS ecl          ${CMAKE_SOURCE_DIR}/libecl
-                ert_geometry ${CMAKE_SOURCE_DIR}/libgeometry
-                ert_util     ${CMAKE_SOURCE_DIR}/libert_util
-                ecl_well     ${CMAKE_SOURCE_DIR}/libecl_well
+    TARGETS libecl
+    DEPEND_DIRS ecl ${CMAKE_SOURCE_DIR}/lib
 )
 
 add_python_package(pyecl ecl SUBDIR ecl
@@ -117,8 +109,6 @@ add_python_package(pyecl ecl SUBDIR geo
 
 add_python_package(pyecl ecl SUBDIR util
     APPEND
-    TARGETS libutil
-    DEPEND_DIRS ert_util ${CMAKE_SOURCE_DIR}/libert_util
     SOURCES python/ecl/util/__init__.py
             python/ecl/util/bool_vector.py
             python/ecl/util/buffer.py
