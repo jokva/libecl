@@ -110,7 +110,7 @@ int ecl3_array_header(const void* source, char* kw, char* type, int* count) {
 
     std::memcpy(kw, src, 8);
     std::uint32_t tmp;
-    ecl3_get_native(&tmp, src + 8, 'I', 1);
+    ecl3_get_native(&tmp, src + 8, ECL3_INTE, 1);
     std::memcpy(type, src + 12, 4);
     *count = tmp;
     return ECL3_OK;
